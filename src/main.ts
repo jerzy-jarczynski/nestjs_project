@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { LoggerInterceptor } from './shared/interceptors/logger.interceptor';
+import { PrismaService } from './shared/services/prisma.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -9,9 +10,8 @@ async function bootstrap() {
   app.useGlobalInterceptors(new LoggerInterceptor());
   app.setGlobalPrefix('api');
 
-  await app.enableShutdownHooks();
-
-  await app.listen(8000);
+  const prismaService = app.get(PrismaService);
+  await prismaService.enableShutdownHooks(app);
+  await app.listen(3000);
 }
-
 bootstrap();
